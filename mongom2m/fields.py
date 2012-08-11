@@ -13,6 +13,8 @@ try:
 except ImportError:
     from pymongo.objectid import ObjectId
 
+REPR_OUTPUT_SIZE = 20
+
 class MongoDBM2MQuerySet(object):
     """
     Helper for returning a set of objects from the managers.
@@ -50,6 +52,12 @@ class MongoDBM2MQuerySet(object):
     def __iter__(self):
         for obj in self.objects:
             yield self._get_obj(obj)
+
+    def __repr__(self):
+        data = list(self)[:REPR_OUTPUT_SIZE + 1] # limit list after conversion because mongodb doesn't use integer indices
+        if len(data) > REPR_OUTPUT_SIZE:
+            data[-1] = "...(remaining elements truncated)..."
+        return repr(data)
     
     def __getitem__(self, key):
         obj = self.objects[key]
